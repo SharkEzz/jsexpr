@@ -1,0 +1,36 @@
+{
+  "name": "jsexpr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsc -p tsconfig.build.json",
+    "watch": "tsc --watch",
+    "coverage": "vitest run --coverage"
+  },
+  "keywords": [],
+  "author": "SharkEzz <icraft640@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.6.3",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
+    "@vitest/coverage-istanbul": "^0.34.4",
+    "eslint": "^8.49.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9",
+    "vitest": "^0.34.4"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "endOfLine": "lf",
+    "semi": true,
+    "trailingComma": "all",
+    "printWidth": 120
+  }
+}
