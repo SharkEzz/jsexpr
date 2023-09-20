@@ -1,9 +1,19 @@
-import type { BinaryExpr, CallExpr, Comparison, LogicalExpr, MemberExpr } from '../../frontend/ast';
+import type { BinaryExpr, CallExpr, Comparison, LogicalExpr, MemberExpr, Not } from '../../frontend/ast';
 import { BinaryOperator, TokenType } from '../../frontend/tokens';
 import { Environment } from '../environment';
 import { evaluate } from '../interpreter';
 import { traverse_object } from '../utils/traverse-object';
 import { BooleanVal, FnValue, MAKE_RUNTIME_VAL, NumberVal, ObjectVal, RuntimeValue, ValueType } from '../values';
+
+export function eval_not(astNode: Not, env: Environment): RuntimeValue {
+  const result = evaluate(astNode.expr, env);
+
+  if (result.type === ValueType.Boolean) {
+    return { ...result, value: !result.value };
+  }
+
+  throw new Error('Cannot negate a non-boolean value');
+}
 
 export function eval_comparison(comparison: Comparison, env: Environment): RuntimeValue {
   const { left, right, operator } = comparison;

@@ -144,6 +144,7 @@ export class Parser {
         args.push(this.parse_expr());
         if (this.at()?.type === TokenType.Comma) this.eat();
       }
+      this.expect(TokenType.RightParen);
 
       return {
         kind: NodeType.CallExpr,

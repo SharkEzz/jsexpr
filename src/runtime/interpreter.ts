@@ -1,4 +1,4 @@
-import { Expressions, NodeType, Not } from '../frontend/ast';
+import { Expressions, NodeType } from '../frontend/ast';
 import { Environment } from './environment';
 import {
   eval_binary_expr,
@@ -6,18 +6,9 @@ import {
   eval_comparison,
   eval_logical_expr,
   eval_member_expression,
+  eval_not,
 } from './eval/expressions';
 import { NumberVal, RuntimeValue, ValueType } from './values';
-
-function eval_not(astNode: Not, env: Environment): RuntimeValue {
-  const result = evaluate(astNode.expr, env);
-
-  if (result.type === ValueType.Boolean) {
-    return { ...result, value: !result.value };
-  }
-
-  throw new Error('Cannot negate a non-boolean value');
-}
 
 export function evaluate(astNode: Expressions, env: Environment): RuntimeValue {
   switch (astNode.kind) {
