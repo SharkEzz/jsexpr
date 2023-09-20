@@ -42,7 +42,7 @@ export class Environment {
         this.variables.set(varname, MK_BOOL(value));
         break;
       case 'object':
-        this.variables.set(varname, value ? MK_OBJECT(value) : MK_NULL()); // Handle special case where typeof null === 'object'
+        this.variables.set(varname, value ? MK_OBJECT(value as Record<string, unknown>) : MK_NULL()); // Handle special case where typeof null === 'object'
         break;
       case 'string':
         this.variables.set(varname, MK_STRING(value));

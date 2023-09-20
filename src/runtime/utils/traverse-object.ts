@@ -3,7 +3,7 @@ import { Identifier, MemberExpr, NodeType } from '../../frontend/ast';
 export function traverse_object(member: MemberExpr, previous?: string[]): string[] {
   const path = previous ?? [];
 
-  if (member.object.kind === NodeType.MemberExpression) {
+  if (member.object.kind === NodeType.MemberExpr) {
     return path.concat(traverse_object(member.object), [(member.property as Identifier).symbol]);
   }
 

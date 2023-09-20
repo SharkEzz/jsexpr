@@ -11,6 +11,11 @@ export enum TokenType {
   Slash = 'Slash',
   Modulo = 'Modulo',
 
+  Comma = 'Comma',
+
+  QuestionMark = 'QuestionMark',
+  NullishCoalescing = 'NullishCoalescing',
+
   Equal = 'Equal',
   NotEqual = 'NotEqual',
   StrictEqual = 'StrictEqual',

@@ -5,10 +5,12 @@ export enum NodeType {
   BinaryExpr = 'BinaryExpr',
   Identifier = 'Identifier',
   Comparison = 'Comparison',
-  MemberExpression = 'MemberExpression',
-  Boolean = 'Boolean',
+  MemberExpr = 'MemberExpr',
+  BooleanLiteral = 'BooleanLiteral',
   Not = 'Not',
   String = 'String',
+  LogicalExpr = 'LogicalExpr',
+  CallExpr = 'CallExpr',
 }
 
 export type Expressions =
@@ -17,10 +19,11 @@ export type Expressions =
   | Comparison
   | MemberExpr
   | Not
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  | Boolean
+  | BooleanLiteral
   | BinaryExpr
-  | StringLiteral;
+  | StringLiteral
+  | LogicalExpr
+  | CallExpr;
 
 export interface Expr {
   kind: NodeType;
@@ -44,7 +47,7 @@ export interface Comparison extends Expr {
 }
 
 export interface MemberExpr extends Expr {
-  kind: NodeType.MemberExpression;
+  kind: NodeType.MemberExpr;
   object: Expressions;
   property: Expressions;
 }
@@ -54,8 +57,8 @@ export interface Not extends Expr {
   expr: Expressions;
 }
 
-export interface Boolean extends Expr {
-  kind: NodeType.Boolean;
+export interface BooleanLiteral extends Expr {
+  kind: NodeType.BooleanLiteral;
   value: boolean;
 }
 
@@ -69,4 +72,17 @@ export interface BinaryExpr extends Expr {
 export interface StringLiteral extends Expr {
   kind: NodeType.String;
   value: string;
+}
+
+export interface LogicalExpr extends Expr {
+  kind: NodeType.LogicalExpr;
+  left: Expressions;
+  right: Expressions;
+  operator: string;
+}
+
+export interface CallExpr extends Expr {
+  kind: NodeType.CallExpr;
+  caller: Identifier;
+  args: Expressions[];
 }

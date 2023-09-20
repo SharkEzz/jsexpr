@@ -1,6 +1,6 @@
 import { BinaryExpr, Expressions, NodeType } from './ast';
 import { tokenize } from './lexer';
-import { Token, TokenType } from './tokens';
+import { BinaryOperator, Token, TokenType } from './tokens';
 
 export class Parser {
   private tokens: Token[] = [];
@@ -74,7 +74,7 @@ export class Parser {
       }
 
       object = {
-        kind: NodeType.MemberExpression,
+        kind: NodeType.MemberExpr,
         object,
         property,
       };
@@ -101,7 +101,7 @@ export class Parser {
   }
 
   private parse_multiplicative_expr(): Expressions {
-    let left = this.parse_primary_expr();
+    let left = this.parse_logical_expr();
 
     while (
       this.at()?.type === TokenType.Slash ||
@@ -109,16 +109,54 @@ export class Parser {
       this.at()?.type === TokenType.Modulo
     ) {
       const operator = this.eat().value;
-      const right = this.parse_primary_expr();
+      const right = this.parse_logical_expr();
       left = {
         kind: NodeType.BinaryExpr,
         left,
         right,
-        operator,
-      } as BinaryExpr;
+        operator: operator as BinaryOperator,
+      };
     }
 
     return left;
+  }
+
+  private parse_logical_expr(): Expressions {
+    let left = this.parse_call_expr();
+
+    while (this.at()?.type === TokenType.NullishCoalescing) {
+      const operator = this.eat().value;
+      const right = this.parse_call_expr();
+      left = {
+        kind: NodeType.LogicalExpr,
+        left,
+        right,
+        operator,
+      };
+    }
+
+    return left;
+  }
+
+  private parse_call_expr(): Expressions {
+    const caller = this.parse_primary_expr();
+
+    if (caller.kind === NodeType.Identifier && this.at()?.type === TokenType.LeftParen) {
+      this.eat(); // Remove left paren
+      const args: Expressions[] = [];
+      while (this.at()?.type !== TokenType.RightParen) {
+        args.push(this.parse_expr());
+        if (this.at()?.type === TokenType.Comma) this.eat();
+      }
+
+      return {
+        kind: NodeType.CallExpr,
+        caller,
+        args,
+      };
+    }
+
+    return caller;
   }
 
   private parse_primary_expr(): Expressions {
@@ -130,7 +168,7 @@ export class Parser {
       case TokenType.Number:
         return { kind: NodeType.NumericLiteral, value: +this.eat().value };
       case TokenType.Boolean:
-        return { kind: NodeType.Boolean, value: this.eat().value === 'true' };
+        return { kind: NodeType.BooleanLiteral, value: this.eat().value === 'true' };
       case TokenType.String:
         return { kind: NodeType.String, value: this.eat().value };
       case TokenType.Bang:

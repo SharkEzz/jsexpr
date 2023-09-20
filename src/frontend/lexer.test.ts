@@ -27,4 +27,25 @@ describe('Lexer', () => {
     };
     expect(t).toThrowError("Unexpected token: 'ç'");
   });
+
+  it('should tokenize question mark and nullish coalescing operator', () => {
+    const tokens = tokenize('? ??');
+    expect(tokens).toHaveLength(2);
+    expect(tokens[0]).toMatchObject<Token>({
+      type: TokenType.QuestionMark,
+      value: '?',
+    });
+    expect(tokens[1]).toMatchObject<Token>({
+      type: TokenType.NullishCoalescing,
+      value: '??',
+    });
+  });
+
+  it('should tokenize call expr', () => {
+    const tokens = tokenize('toto()');
+    expect(tokens).toHaveLength(3);
+    expect(tokens[0].type).toBe(TokenType.Identifier);
+    expect(tokens[1].type).toBe(TokenType.LeftParen);
+    expect(tokens[2].type).toBe(TokenType.RightParen);
+  });
 });

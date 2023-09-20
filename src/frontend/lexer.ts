@@ -22,6 +22,9 @@ const SPECS: Spec[] = [
   [TokenType.Star, /^\*/],
   [TokenType.Slash, /^\//],
   [TokenType.Modulo, /^%/],
+  [TokenType.NullishCoalescing, /^\?\?/],
+  [TokenType.QuestionMark, /^\?/],
+  [TokenType.Comma, /^,/],
 ];
 
 export function tokenize(source: string): Token[] {

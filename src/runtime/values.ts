@@ -1,12 +1,15 @@
+import { Environment } from './environment';
+
 export enum ValueType {
   Boolean = 'Boolean',
   Null = 'Null',
   Number = 'Number',
   Object = 'Object',
   String = 'String',
+  FnValue = 'FnValue',
 }
 
-export type RuntimeValue = NullVal | BooleanVal | NumberVal | ObjectVal | StringVal;
+export type RuntimeValue = NullVal | BooleanVal | NumberVal | ObjectVal | StringVal | FnValue;
 
 export interface RuntimeVal {
   type: ValueType;
@@ -38,6 +41,17 @@ export interface StringVal extends RuntimeVal {
   value: string;
 }
 
+export type FunctionCall = (args: RuntimeVal[], env: Environment) => RuntimeVal;
+
+export interface FnValue extends RuntimeVal {
+  type: ValueType.FnValue;
+  value: FunctionCall;
+}
+
+export function MK_FUNC(call: FunctionCall): FnValue {
+  return { type: ValueType.FnValue, value: call };
+}
+
 export function MK_BOOL(b = true): BooleanVal {
   return { type: ValueType.Boolean, value: b };
 }
@@ -54,30 +68,34 @@ export function MK_NUMBER(nb: number): NumberVal {
   return { type: ValueType.Number, value: nb };
 }
 
-export function MK_OBJECT(object: object): ObjectVal {
-  return {
-    type: ValueType.Object,
-    value: new Map(MK_OBJECT_VAL(object as Record<string, unknown>)),
-  };
-}
-
-function MK_OBJECT_VAL(object: Record<string, unknown>): [string, RuntimeValue][] {
+export function MK_OBJECT(object: Record<string, unknown>): ObjectVal {
   const value = Object.keys(object).map<[string, RuntimeValue]>((key) => {
     const item = object[key];
 
-    switch (typeof item) {
-      case 'boolean':
-        return [key, MK_BOOL(item)];
-      case 'number':
-        return [key, MK_NUMBER(item)];
-      case 'string':
-        return [key, MK_STRING(item)];
-      case 'object':
-        return [key, !!item ? MK_OBJECT(item) : MK_NULL()];
-      default:
-        throw new Error('Failed to create object');
-    }
+    const runtimeVal = MAKE_RUNTIME_VAL(item);
+
+    return [key, runtimeVal];
   });
 
-  return value;
+  return {
+    type: ValueType.Object,
+    value: new Map(value),
+  };
+}
+
+export function MAKE_RUNTIME_VAL<T>(value: T): RuntimeValue {
+  switch (typeof value) {
+    case 'boolean':
+      return MK_BOOL(value);
+    case 'number':
+      return MK_NUMBER(value);
+    case 'string':
+      return MK_STRING(value);
+    case 'object':
+      return value ? MK_OBJECT(value as Record<string, unknown>) : MK_NULL();
+    case 'undefined':
+      return MK_NULL();
+    default:
+      throw new Error('Not handled');
+  }
 }

@@ -1,9 +1,9 @@
-import type { BinaryExpr, Comparison, MemberExpr } from '../../frontend/ast';
+import type { BinaryExpr, CallExpr, Comparison, LogicalExpr, MemberExpr } from '../../frontend/ast';
 import { BinaryOperator, TokenType } from '../../frontend/tokens';
 import { Environment } from '../environment';
 import { evaluate } from '../interpreter';
 import { traverse_object } from '../utils/traverse-object';
-import { BooleanVal, NumberVal, ObjectVal, RuntimeValue, ValueType } from '../values';
+import { BooleanVal, FnValue, MAKE_RUNTIME_VAL, NumberVal, ObjectVal, RuntimeValue, ValueType } from '../values';
 
 export function eval_comparison(comparison: Comparison, env: Environment): RuntimeValue {
   const { left, right, operator } = comparison;
@@ -77,4 +77,29 @@ export function eval_binary_expr(expr: BinaryExpr, env: Environment): RuntimeVal
   }
 
   return eval_numeric_binary_expr(lhs as NumberVal, rhs as NumberVal, operator);
+}
+
+export function eval_logical_expr(expr: LogicalExpr, env: Environment): RuntimeValue {
+  let result;
+
+  switch (expr.operator) {
+    case '??': {
+      const left = evaluate(expr.left, env);
+      const right = evaluate(expr.right, env);
+
+      result = left.value ?? right.value;
+      break;
+    }
+    default:
+      throw new Error('Unsupported operator for logical expression');
+  }
+
+  return MAKE_RUNTIME_VAL(result);
+}
+
+export function eval_call_expr(expr: CallExpr, env: Environment): RuntimeValue {
+  const args = expr.args.map((arg) => evaluate(arg, env));
+  const fn = evaluate(expr.caller, env);
+
+  return (fn as FnValue).value(args, env) as RuntimeValue;
 }
