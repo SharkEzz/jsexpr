@@ -8,11 +8,7 @@ export class Parser {
   parse(source: string) {
     this.tokens = tokenize(source);
 
-    const ast = this.parse_expr();
-
-    if (process.env.DEBUG_AST === 'true') console.log(ast);
-
-    return ast;
+    return this.parse_expr();
   }
 
   private at() {
