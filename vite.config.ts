@@ -4,7 +4,6 @@ import { resolve } from 'node:path';
 
 export default defineConfig({
     test: {
-        globals: true,
         alias: {
             '@': resolve(__dirname, 'src'),
         },

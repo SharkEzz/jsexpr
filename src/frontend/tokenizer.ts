@@ -4,7 +4,7 @@ type Spec = [TokenType, RegExp];
 
 const specs: Readonly<Readonly<Spec>[]> = [
   [TokenType.Number, /^[0-9]+/],
-  [TokenType.String, /^"([^"]*)"/],
+  [TokenType.String, /^"([^"]*)"/s],
   [TokenType.String, /^'([^']*)'/],
   [TokenType.Boolean, /^(true|false)/],
 

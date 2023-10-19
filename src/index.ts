@@ -14,5 +14,5 @@ export function compile(source: string) {
 export default function evaluate<T>(source: string, context?: Record<string, unknown>): T {
   const script = new vm.Script(source);
   const sandbox = vm.createContext(context);
-  return script.runInContext(sandbox) as T;
+  return script.runInContext(sandbox, { breakOnSigint: true, timeout: 5000 }) as T;
 }

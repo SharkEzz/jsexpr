@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { Expression, NodeType } from './ast';
 import { Parser } from './parser';
 
