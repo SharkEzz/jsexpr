@@ -3,7 +3,7 @@ import { BinaryExpression, ComparisonExpression, Expression, NodeType } from './
 function processExpression(expression: BinaryExpression | ComparisonExpression): string {
   switch (expression.operator) {
     case 'in':
-      return generator(expression.left) + ' in ' + generator(expression.right);
+      return generator(expression.right) + '.includes(' + generator(expression.left) + ')';
     case 'contains':
       return generator(expression.left) + '.includes(' + generator(expression.right) + ')';
     default: {
@@ -19,6 +19,7 @@ function processExpression(expression: BinaryExpression | ComparisonExpression):
  */
 export function generator(source: Expression) {
   let output = '';
+
   switch (source.kind) {
     case NodeType.ComparisonExpression:
     case NodeType.BinaryExpression:
@@ -30,7 +31,10 @@ export function generator(source: Expression) {
       output += source.value;
       break;
     case NodeType.StringLiteral:
-      // TODO: escape string
+      if (source.singleQuote) {
+        output += `'${source.value}'`;
+        break;
+      }
       output += `"${source.value}"`;
       break;
     case NodeType.ArrayAccessExpression:
@@ -54,8 +58,15 @@ export function generator(source: Expression) {
       output += generator(source.expr);
       break;
     case NodeType.Not:
-      output += '!';
+      output += '!(';
       output += generator(source.expr);
+      output += ')';
+      break;
+    case NodeType.FunctionCall:
+      output += generator(source.callee);
+      output += '(';
+      output += source.args.map(generator).join(',');
+      output += ')';
       break;
   }
 

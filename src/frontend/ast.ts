@@ -10,6 +10,7 @@ export enum NodeType {
   BinaryExpression = 'BinaryExpression',
   UnaryExpression = 'UnaryExpression',
   ComparisonExpression = 'ComparisonExpression',
+  FunctionCall = 'FunctionCall',
 }
 
 export interface Expr {
@@ -29,6 +30,7 @@ export interface NumericLiteral extends Expr {
 export interface StringLiteral extends Expr {
   kind: NodeType.StringLiteral;
   value: string;
+  singleQuote: boolean;
 }
 
 export interface BooleanLiteral extends Expr {
@@ -78,6 +80,12 @@ export interface ArrayAccessExpression extends Expr {
   indexExpr: Expression;
 }
 
+export interface FunctionCall extends Expr {
+  kind: NodeType.FunctionCall;
+  callee: Expression;
+  args: Expression[];
+}
+
 export type Expression =
   | NumericLiteral
   | StringLiteral
@@ -89,4 +97,5 @@ export type Expression =
   | UnaryExpression
   | ComparisonExpression
   | ArrayAccessExpression
-  | ArrayExpression;
+  | ArrayExpression
+  | FunctionCall;

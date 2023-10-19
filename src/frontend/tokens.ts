@@ -34,16 +34,19 @@ export enum TokenType {
   Contains = 'Contains',
 
   Skipped = 'Skipped',
+  EOF = 'EOF',
 }
 
 export interface Token {
   kind: TokenType;
   value: string;
+  raw: string;
 }
 
-export function createToken(kind: TokenType, value: string): Token {
+export function createToken(kind: TokenType, value = '', raw?: string): Token {
   return {
     kind,
     value,
+    raw: raw ?? value,
   };
 }

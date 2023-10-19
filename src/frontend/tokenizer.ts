@@ -4,8 +4,8 @@ type Spec = [TokenType, RegExp];
 
 const specs: Readonly<Readonly<Spec>[]> = [
   [TokenType.Number, /^[0-9]+/],
-  [TokenType.String, /^"(.*)"/s],
-  [TokenType.String, /^'(.*)'/],
+  [TokenType.String, /^"([^"]*)"/],
+  [TokenType.String, /^'([^']*)'/],
   [TokenType.Boolean, /^(true|false)/],
 
   [TokenType.Dot, /^\./],
@@ -28,7 +28,6 @@ const specs: Readonly<Readonly<Spec>[]> = [
   [TokenType.LessThan, /^</],
   [TokenType.LessThanOrEqual, /^<=/],
   [TokenType.Bang, /^\!/],
-
   [TokenType.And, /^and/],
   [TokenType.And, /^&&/],
   [TokenType.Or, /^or/],
@@ -37,8 +36,7 @@ const specs: Readonly<Readonly<Spec>[]> = [
   [TokenType.In, /^in/],
   [TokenType.Contains, /^contains/],
 
-  [TokenType.Identifier, /^([a-zA-Z_][a-zA-Z0-9_]*)/],
-
+  [TokenType.Identifier, /^[a-zA-Z_][a-zA-Z0-9_]+/],
   [TokenType.Skipped, /^\s+/],
 ] as const;
 
@@ -61,7 +59,7 @@ export function tokenize(source: string) {
 
       if (type === TokenType.Skipped) continue outer;
 
-      const token = createToken(type, value);
+      const token = createToken(type, value, matched[0]);
 
       tokens.push(token);
       continue outer;

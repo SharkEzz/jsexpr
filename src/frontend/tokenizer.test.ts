@@ -19,7 +19,7 @@ describe('Tokenizer', () => {
   });
 
   it('should tokenize string', () => {
-    expect(tokenize('"toto"')).toEqual([createToken(TokenType.String, 'toto')]);
+    expect(tokenize('"toto"')).toEqual([createToken(TokenType.String, 'toto', '"toto"')]);
   });
 
   it('should tokenize identifier', () => {
@@ -54,6 +54,36 @@ describe('Tokenizer', () => {
     ]);
   });
 
+  it('should tokenize boolean expression with not in', () => {
+    expect(tokenize('5 not in [1, 2]')).toEqual([
+      createToken(TokenType.Number, '5'),
+      createToken(TokenType.Not, 'not'),
+      createToken(TokenType.In, 'in'),
+      createToken(TokenType.LeftBracket, '['),
+      createToken(TokenType.Number, '1'),
+      createToken(TokenType.Comma, ','),
+      createToken(TokenType.Number, '2'),
+      createToken(TokenType.RightBracket, ']'),
+    ]);
+  });
+
+  it('should tokenize boolean expression with contains on a string', () => {
+    expect(tokenize("'toto' contains 'to'")).toEqual([
+      createToken(TokenType.String, 'toto', "'toto'"),
+      createToken(TokenType.Contains, 'contains'),
+      createToken(TokenType.String, 'to', "'to'"),
+    ]);
+  });
+
+  it('should tokenize boolean expression with not contains on a string', () => {
+    expect(tokenize("'toto' not contains 'to'")).toEqual([
+      createToken(TokenType.String, 'toto', "'toto'"),
+      createToken(TokenType.Not, 'not'),
+      createToken(TokenType.Contains, 'contains'),
+      createToken(TokenType.String, 'to', "'to'"),
+    ]);
+  });
+
   it('should tokenize string on multiline', () => {
     expect(
       tokenize(`" titi
@@ -63,6 +93,8 @@ tata"`),
         TokenType.String,
         ` titi
 tata`,
+        `" titi
+tata"`,
       ),
     ]);
   });
